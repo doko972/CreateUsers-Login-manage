@@ -9,19 +9,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT); // Hachage du mot de passe
     $createTime = date('Y-m-d H:i:s');
-    
-    // Gestion de l'upload de l'image
-    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == 0) {
-        $uploadDir = 'uploads/';
-        $uploadFile = $uploadDir . basename($_FILES['profile_image']['name']);
+    $role = 'user'; // Par défaut, rôle utilisateur
+    $uploadDir = 'uploads/';
+    $imagePath = '';
 
+    // Vérifie que le répertoire d'upload existe
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    // Gestion de l'upload de l'image
+    if (isset($_FILES['profile_image']) && $_FILES['profile_image']['error'] == UPLOAD_ERR_OK) {
+        $uploadFile = $uploadDir . basename($_FILES['profile_image']['name']);
         if (move_uploaded_file($_FILES['profile_image']['tmp_name'], $uploadFile)) {
             $imagePath = $uploadFile;
         } else {
-            $imagePath = 'uploads/default.png'; // Chemin par défaut si l'upload échoue
+            $imagePath = $uploadDir . 'default.png'; // Chemin par défaut si l'upload échoue
+            addError('upload_fail');
         }
     } else {
-        $imagePath = 'uploads/default.png'; // Chemin par défaut si aucune image n'est uploadée
+        $imagePath = $uploadDir . 'default.png'; // Chemin par défaut si aucune image n'est uploadée
     }
 
     // Insère l'image dans la table img et obtient l'id
@@ -30,13 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $idImg = $dbCo->lastInsertId();
 
     // Insère le nouvel utilisateur
-    $query = $dbCo->prepare("INSERT INTO users (name, email, password, create_time, id_img) VALUES (:name, :email, :password, :create_time, :id_img)");
+    $query = $dbCo->prepare("INSERT INTO users (name, email, password, create_time, id_img, role) 
+    VALUES (:name, :email, :password, :create_time, :id_img, :role)");
     $isInsertOk = $query->execute([
         'name' => $name,
         'email' => $email,
         'password' => $password,
         'create_time' => $createTime,
-        'id_img' => $idImg
+        'id_img' => $idImg,
+        'role' => $role
     ]);
 
     if ($isInsertOk) {

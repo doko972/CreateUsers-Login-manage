@@ -5,12 +5,17 @@ include 'includes/_database.php';
 include 'includes/_functions.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
+    $name = $_POST['name'];
+    // $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $query = $dbCo->prepare("SELECT * FROM users WHERE email = :email");
-    $query->execute(['email' => $email]);
+    $query = $dbCo->prepare("SELECT * FROM users WHERE name = :name");
+    $query->execute(['name' => $name]);
     $user = $query->fetch();
+
+    // $query = $dbCo->prepare("SELECT * FROM users WHERE email = :email");
+    // $query->execute(['email' => $email]);
+    // $user = $query->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user'] = $user;
