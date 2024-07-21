@@ -8,7 +8,6 @@ function generateToken() {
 }
 
 function redirectTo(string $url): void {
-    // Assurez-vous qu'il n'y a pas de sortie avant d'envoyer les en-têtes
     if (headers_sent()) {
         echo "<script>location.href='$url';</script>";
     } else {
@@ -97,16 +96,16 @@ function stripTagsArray(array &$data): void {
     $data = array_map('strip_tags', $data);
 }
 
-function checkProductInfo(array $productData): bool {
-    if (!isset($productData['nameProduct']) || strlen($productData['nameProduct']) === 0) {
-        addError('product_name');
-    }
-    if (strlen($productData['nameProduct']) > 50) {
-        addError('product_name_size');
-    }
-    if (!isset($productData['price']) || !is_numeric($productData['price'])) {
-        addError('product_price');
-    }
-    return empty($_SESSION['errorsList']);
-}
+// function checkProductInfo(array $productData): bool {
+//     if (!isset($productData['nameProduct']) || strlen($productData['nameProduct']) === 0) {
+//         addError('product_name');
+//     }
+//     if (strlen($productData['nameProduct']) > 50) {
+//         addError('product_name_size');
+//     }
+//     if (!isset($productData['price']) || !is_numeric($productData['price'])) {
+//         addError('product_price');
+//     }
+//     return empty($_SESSION['errorsList']);
+// }
 ?>

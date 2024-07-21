@@ -1,8 +1,8 @@
 <?php
-$_HOST = 'db';
-$_DBNAME = 'matrice';
-$_LOGIN = 'matrice';
-$_PASSWD = 'matrice';
+$_HOST = 'db'; //ip adress
+$_DBNAME = 'matrice'; //database name
+$_LOGIN = 'matrice'; //database login
+$_PASSWD = 'matrice'; //database password
 
 try {
     $dbCo = new PDO(
